@@ -65,11 +65,10 @@ class two_cnf:
         print(self.con)
 
 
+# helper function that applies the double negation rule to a formula
+#   the function removes all occurrences ~~ from the formula
 def double_neg(formula):
-    if (neg+neg) in formula:
-        return formula.replace((neg+neg), '')
-    else:
-        return formula
+    return formula.replace((neg+neg), '')
 
 
 def two_sat_solver(two_cnf_formula):
