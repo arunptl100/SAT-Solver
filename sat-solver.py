@@ -78,12 +78,13 @@ def double_neg(formula):
 
 # Function that performs Depth First Search on a directed graph
 # O(|V|+|E|)
-def DFS(dir_graph, visited, node):
+def DFS(dir_graph, visited, node, stack, scc):
     if node not in visited:
-        print(node)
-        visited.add(node)
+        visited.append(node)
         for neighbour in dir_graph.graph[node]:
-            DFS(dir_graph, visited, neighbour)
+            DFS(dir_graph, visited, neighbour, stack, scc)
+        stack.append(node)
+        scc.append(node)
     return visited
 
 
@@ -102,9 +103,20 @@ def transpose_graph(d_graph):
 # Function that finds all the strongly connected components in a given graph
 # Implementation of Kosaraju’s algorithm
 # Performance O(|V|+|E|) for a directed graph G=(V,E)
-def strongly_connected_components(dir_graph):
+def strongly_connected_components(dir_graph, start_node):
     stack = []
-    pass
+    DFS(dir_graph, [], start_node, stack, [])
+    print("STACK = ")
+    print(stack)
+    t_g = transpose_graph(dir_graph)
+    visited = []
+    while stack:
+        i = stack.pop()
+        if i not in visited:
+            print("Strongly connected components of " + i)
+            scc = []
+            DFS(t_g, visited, i, [], scc)
+            print(scc)
 
 
 # Function that determines if a given 2-CNF is Satisfiable or not
@@ -127,9 +139,9 @@ def two_sat_solver(two_cnf_formula):
 
 # ======= 2-CNF setup =======
 g = dir_graph()
-g.addEdge('u', 'v')
-g.addEdge('v', 'x')
-g.addEdge('x', 'z')
-print(g.print())
-print(transpose_graph(g).print())
-# DFS(g, set(), 'u')
+g.addEdge('1', '0')
+g.addEdge('0', '2')
+g.addEdge('2', '1')
+g.addEdge('0', '3')
+g.addEdge('3', '4')
+strongly_connected_components(g, '0')
