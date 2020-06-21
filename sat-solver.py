@@ -78,11 +78,18 @@ def double_neg(formula):
 
 # Function that performs Depth First Search on a directed graph
 # O(|V|+|E|)
-def DFS(dir_graph, visited, node, stack, scc):
+def DFS(dir_graph, visited, stack, scc):
+    for node in dir_graph.nodes:
+        if node not in visited:
+            explore(dir_graph, visited, node, stack, scc)
+
+
+# DFS helper function that 'explores' as far as possible from a node
+def explore(dir_graph, visited, node, stack, scc):
     if node not in visited:
         visited.append(node)
         for neighbour in dir_graph.graph[node]:
-            DFS(dir_graph, visited, neighbour, stack, scc)
+            explore(dir_graph, visited, neighbour, stack, scc)
         stack.append(node)
         scc.append(node)
     return visited
@@ -103,20 +110,35 @@ def transpose_graph(d_graph):
 # Function that finds all the strongly connected components in a given graph
 # Implementation of Kosaraju’s algorithm
 # Performance O(|V|+|E|) for a directed graph G=(V,E)
-def strongly_connected_components(dir_graph, start_node):
+# IN : directed graph, G
+# OUT: list of lists containing the strongly connected components of G
+def strongly_connected_components(dir_graph):
     stack = []
-    DFS(dir_graph, [], start_node, stack, [])
-    print("STACK = ")
-    print(stack)
+    sccs = []
+    DFS(dir_graph, [], stack, [])
     t_g = transpose_graph(dir_graph)
     visited = []
     while stack:
-        i = stack.pop()
-        if i not in visited:
-            print("Strongly connected components of " + i)
+        node = stack.pop()
+        if node not in visited:
             scc = []
-            DFS(t_g, visited, i, [], scc)
-            print(scc)
+            explore(t_g, visited, node, [], scc)
+            sccs.append(scc)
+    return sccs
+
+
+# Function that finds a contradiction in a list of strong connected components
+# if [a , b , ~a,  c, a] is a connected component then the function returns T
+# since a -> ~a -> a exists
+# sccs = Strongly Connected Components
+#   It is a list of lists representing the connected components
+def find_contradiction(sccs):
+    for component in sccs:
+        for literal in component:
+            for other_literal in component[component.index(literal):]:
+                if other_literal == double_neg(neg + literal):
+                    return True
+    return False
 
 
 # Function that determines if a given 2-CNF is Satisfiable or not
@@ -135,13 +157,31 @@ def two_sat_solver(two_cnf_formula):
         else:
             graph.addEdge(double_neg(neg+clause[0]), clause[0])
     print(graph.print())
+    if not find_contradiction(strongly_connected_components(graph)):
+        print("2-CNF Satisfiable")
+    else:
+        print("2-CND not Satisfiable")
 
 
+# [a, b, a, c, ~b, d]
 # ======= 2-CNF setup =======
-g = dir_graph()
-g.addEdge('1', '0')
-g.addEdge('0', '2')
-g.addEdge('2', '1')
-g.addEdge('0', '3')
-g.addEdge('3', '4')
-strongly_connected_components(g, '0')
+# g = dir_graph()
+# g.addEdge('a', 'b')
+# g.addEdge('b', 'e')
+# g.addEdge('e', 'a')
+# g.addEdge('e', 'f')
+# g.addEdge('b', 'f')
+# g.addEdge('f', 'g')
+# g.addEdge('g', 'f')
+# g.addEdge('b', 'c')
+# g.addEdge('c', 'g')
+# g.addEdge('c', 'd')
+# g.addEdge('d', 'c')
+# g.addEdge('d', 'h')
+# g.addEdge('h', 'd')
+# g.addEdge('h', 'g')
+# print(strongly_connected_components(g))
+formula = two_cnf()
+formula.add_clause(['x', 'y'])
+formula.add_clause(['y', '~z'])
+two_sat_solver(formula)
