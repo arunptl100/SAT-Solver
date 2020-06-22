@@ -122,6 +122,7 @@ def strongly_connected_components(dir_graph):
         node = stack.pop()
         if node not in visited:
             scc = []
+            scc.append(node)
             explore(t_g, visited, node, [], scc)
             sccs.append(scc)
     return sccs
@@ -143,6 +144,8 @@ def find_contradiction(sccs):
 
 # Function that determines if a given 2-CNF is Satisfiable or not
 def two_sat_solver(two_cnf_formula):
+    print("Checking if the following 2-CNF is Satisfiable in linear time ")
+    two_cnf_formula.print()
     # setup the edges of the graph
     # G = (V,E) , V = L U ~L where L = set of variables in 2-CNF
     # E =
@@ -156,32 +159,17 @@ def two_sat_solver(two_cnf_formula):
             graph.addEdge(double_neg(neg+v), u)
         else:
             graph.addEdge(double_neg(neg+clause[0]), clause[0])
-    print(graph.print())
     if not find_contradiction(strongly_connected_components(graph)):
         print("2-CNF Satisfiable")
     else:
-        print("2-CND not Satisfiable")
+        print("2-CNF not Satisfiable")
 
 
 # [a, b, a, c, ~b, d]
 # ======= 2-CNF setup =======
-# g = dir_graph()
-# g.addEdge('a', 'b')
-# g.addEdge('b', 'e')
-# g.addEdge('e', 'a')
-# g.addEdge('e', 'f')
-# g.addEdge('b', 'f')
-# g.addEdge('f', 'g')
-# g.addEdge('g', 'f')
-# g.addEdge('b', 'c')
-# g.addEdge('c', 'g')
-# g.addEdge('c', 'd')
-# g.addEdge('d', 'c')
-# g.addEdge('d', 'h')
-# g.addEdge('h', 'd')
-# g.addEdge('h', 'g')
-# print(strongly_connected_components(g))
 formula = two_cnf()
-formula.add_clause(['x', 'y'])
-formula.add_clause(['y', '~z'])
+formula.add_clause(['a', 'b'])
+formula.add_clause(['~a', 'b'])
+formula.add_clause(['a', '~b'])
+formula.add_clause(['~a', '~b'])
 two_sat_solver(formula)
