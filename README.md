@@ -12,6 +12,12 @@ Next the solver computes the strongly connected components of G using Kosarajuâ€
 in O(|V|+|E|) time.
 If there exists a variable x such that x ~> ~x ~> x occurs in a strongly connected component , then the solver returns False, signifying that the formula is unsatisfiable. It returns True otherwise, showing that the formula is satisfiable. 
 
+Key: 
+ - u = union 
+ - v = logical disjunction (or)
+ - ~ = logical negation (not) 
+ - -> = logical implication 
+
 ## User guide
  Clone the repository 
  To add a 2-CNF formula, open `sat-solver.py` and modify the lines from `169` onwards.
