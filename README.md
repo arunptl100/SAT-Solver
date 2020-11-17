@@ -19,7 +19,7 @@ Key:
  - -> = logical implication 
 
 ## User guide
- Clone the repository 
+ Clone the repository.
  To add a 2-CNF formula, open `sat-solver.py` and modify the lines from `169` onwards.
  To add the clause (u V ~x) to the formula, add the line `formula.add_clause(['u', '~x'])`.
  Run the solver using `python3` 
